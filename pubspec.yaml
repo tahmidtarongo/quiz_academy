@@ -41,6 +41,10 @@ dependencies:
   http: ^0.13.5
   flutter_easyloading: ^3.0.5
   flutter_riverpod: ^2.1.1
+  circular_countdown_timer: ^0.2.2
+  assets_audio_player: ^3.0.5
+  feather_icons: ^1.2.0
+  percent_indicator: ^4.0.1
 
 dev_dependencies:
   flutter_test:
