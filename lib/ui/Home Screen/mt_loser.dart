@@ -213,7 +213,6 @@ class _MtLoserState extends State<MtLoser> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 child: ListTile(
-                  onTap: (() => showPopUp(widget.quizzes.retakePoint.toString())),
                   title: Text(
                     'Play again',
                     textAlign: TextAlign.center,
