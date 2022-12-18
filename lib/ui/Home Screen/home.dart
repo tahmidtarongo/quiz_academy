@@ -1,8 +1,5 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_academy/provider/quiz_provider.dart';
 import 'package:quiz_academy/style/app_colors.dart';

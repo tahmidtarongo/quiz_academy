@@ -29,7 +29,6 @@ class _QuizScreenState extends State<QuizScreen> {
   bool isSelected = true;
   String select = '';
   int currentIndex = 0;
-  List<String> option = ['Yes', 'No', 'None', 'Don\'t know'];
   int score = 0;
 
 
