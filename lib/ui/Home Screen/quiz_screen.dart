@@ -3,11 +3,13 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:quiz_academy/config/config.dart';
 import 'package:quiz_academy/style/app_colors.dart';
 
 import '../../model/Quiz_model.dart';
+import '../../model/ad_helper.dart';
 import '../../style/constant.dart';
 import '../../widgets/button_global.dart';
 import 'mt_loser.dart';
@@ -46,11 +48,75 @@ class _QuizScreenState extends State<QuizScreen> {
   ];
   final CountDownController _controller = CountDownController();
   final assetsAudioPlayer = AssetsAudioPlayer();
-  @override
-  void initState() {
-    super.initState();
+  int _interstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 5;
+
+  late BannerAd _bottomBannerAd;
+  InterstitialAd? _interstitialAd;
+
+  bool _isBottomBannerAdLoaded = false;
+
+  void _createBottomBannerAd() {
+    _bottomBannerAd = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(onAdLoaded: (_) {
+        setState(() {
+          print('Banner Ad Loaded');
+          _isBottomBannerAdLoaded = true;
+        });
+      }, onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+      }),
+    );
+    _bottomBannerAd.load();
   }
 
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback:
+        InterstitialAdLoadCallback(onAdLoaded: (InterstitialAd ad) {
+          print('Interstitial Ad Loaded');
+          _interstitialAd = ad;
+          _interstitialLoadAttempts = 0;
+        }, onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts <= maxFailedLoadAttempts) {
+            _createInterstitialAd();
+          }
+        }));
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (InterstitialAd ad) {
+            ad.dispose();
+            _createInterstitialAd();
+          }, onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        _createInterstitialAd();
+      });
+      _interstitialAd!.show();
+    }
+  }
+
+  Future<void> init() async {
+    await Future.delayed(const Duration(seconds: 10));
+    _interstitialAd != null ? _showInterstitialAd() : null;
+  }
+
+  @override
+  void initState() {
+    _createBottomBannerAd();
+    _createInterstitialAd();
+    init();
+    super.initState();
+  }
   @override
   void dispose() {
     assetsAudioPlayer.dispose();
@@ -63,6 +129,13 @@ class _QuizScreenState extends State<QuizScreen> {
         onWillPop: () async => false,
         child: Scaffold(
           extendBodyBehindAppBar: true,
+          bottomNavigationBar: _isBottomBannerAdLoaded
+              ? SizedBox(
+            height: _bottomBannerAd.size.height.toDouble(),
+            width: _bottomBannerAd.size.width.toDouble(),
+            child: AdWidget(ad: _bottomBannerAd),
+          )
+              : null,
           body: PageView.builder(
               controller: pageController,
               itemCount: widget.quizzes.questions!.length,
