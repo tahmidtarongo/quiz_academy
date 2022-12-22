@@ -16,7 +16,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-
   final TextEditingController emailEditingController = TextEditingController();
   final TextEditingController passwordEditingController = TextEditingController();
 
@@ -43,38 +42,48 @@ class _SignInState extends State<SignIn> {
                   height: 20.0,
                 ),
                 AppTextField(
-                    textFieldType: TextFieldType.EMAIL,
-                    controller: emailEditingController,
-                    decoration: myInputDecoration.copyWith(labelText: 'Email Address', hintText: 'Please Enter Your Email Address')),
+                  textFieldType: TextFieldType.EMAIL,
+                  controller: emailEditingController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.0))
+                  ),
+                ),
                 const SizedBox(
                   height: 10.0,
                 ),
                 AppTextField(
-                  controller: passwordEditingController,
-                    textFieldType: TextFieldType.PASSWORD, decoration: myInputDecoration.copyWith(labelText: 'Password', hintText: 'Please Enter Your Password')),
+                    controller: passwordEditingController,
+                    textFieldType: TextFieldType.PASSWORD,
+                    decoration: myInputDecoration.copyWith(labelText: 'Password', hintText: 'Please Enter Your Password')),
                 const SizedBox(
                   height: 20.0,
                 ),
-                ButtonGlobal(buttonText: 'Sign In', buttonDecoration: myButtonDecoration, buttonTextColor: Colors.white, onPressed: () async{
-                  try{
-                    EasyLoading.show(status: 'Signing In..');
-                    bool status = await AuthRepo().signInWithEmail(emailEditingController.text, passwordEditingController.text);
-                    if(status){
-                      Home().launch(context,isNewTask: true);
-                      EasyLoading.showSuccess('Sign In Successfully');
-                    } else{
-                      EasyLoading.showError('Sign in Failed');
-
-                    }
-                  }catch(e){
-                    EasyLoading.showError(e.toString());
-                  }
-                }),
+                ButtonGlobal(
+                    buttonText: 'Sign In',
+                    buttonDecoration: myButtonDecoration,
+                    buttonTextColor: Colors.white,
+                    onPressed: () async {
+                      try {
+                        EasyLoading.show(status: 'Signing In..');
+                        bool status = await AuthRepo().signInWithEmail(emailEditingController.text, passwordEditingController.text);
+                        if (status) {
+                          Home().launch(context, isNewTask: true);
+                          EasyLoading.showSuccess('Sign In Successfully');
+                        } else {
+                          EasyLoading.showError('Sign in Failed');
+                        }
+                      } catch (e) {
+                        EasyLoading.showError(e.toString());
+                      }
+                    }),
                 const SizedBox(
                   height: 20.0,
                 ),
-                ButtonGlobal(buttonText: 'Sign Up', buttonDecoration: myButtonDecoration.copyWith(color: Colors.white,border: Border.all(color: AppColor.mainColor)), buttonTextColor: AppColor.titleColor, onPressed: () {}),
-
+                ButtonGlobal(
+                    buttonText: 'Sign Up',
+                    buttonDecoration: myButtonDecoration.copyWith(color: Colors.white, border: Border.all(color: AppColor.mainColor)),
+                    buttonTextColor: AppColor.titleColor,
+                    onPressed: () {}),
               ],
             ),
           ),
