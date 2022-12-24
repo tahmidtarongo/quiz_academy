@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:quiz_academy/ui/Splash%20Screen/splash_screen.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  OneSignal.shared.setAppId('940cbe34-ddd5-4eaf-bbbc-d09c997fbc84');
+
+// The promptForPushNotificationsWithUserResponse function will show the iOS or Android push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission
+  await OneSignal.shared.promptUserForPushNotificationPermission();
   runApp(const ProviderScope(child: MyApp()));
 }
 
